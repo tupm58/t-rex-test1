@@ -1,15 +1,15 @@
 // Create our 'main' state that will contain the game
 var mainState = {
-    preload: function() {
+    preload: function () {
         // This function will be executed at the beginning
         // That's where we load the images and sounds
-        game.load.image('bird','assets/bird.png');
-        game.load.image('pipe','assets/pipe.png');
+        game.load.image('bird', 'assets/bird.png');
+        game.load.image('pipe', 'assets/pipe.png');
         game.load.audio('jump', 'assets/jump.wav');
 
     },
 
-    create: function() {
+    create: function () {
         this.jumpSound = game.add.audio('jump');
 
         // This function is called after the preload function
@@ -31,33 +31,30 @@ var mainState = {
 
         //call jump function when press space
         var spaceKey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-        spaceKey.onDown.add(this.jump,this);
+        spaceKey.onDown.add(this.jump, this);
 
         bird.anchor.setTo(-0.2, 0.5);
 
         //PIPE
-         pipes = game.add.group();
-         timer = game.time.events.loop(1500, this.addRowOfPipes, this);
+        pipes = game.add.group();
+        timer = game.time.events.loop(1500, this.addRowOfPipes, this);
 
         //SCORE
         score = 0;
-        labelScore = game.add.text(20,20,"0",{font:"30px Arial",fill:"#ffffff"});
-
-
-
+        labelScore = game.add.text(20, 20, "0", {font: "30px Arial", fill: "#ffffff"});
     },
 
-    update: function() {
+    update: function () {
         // This function is called 60 times per second
         // It contains the game's logic
-        if (bird.angle < 20 ){
+        if (bird.angle < 20) {
             bird.angle += 1;
         }
-        game.physics.arcade.overlap(bird,pipes,this.hitPipe,null,this);
+        game.physics.arcade.overlap(bird, pipes, this.hitPipe, null, this);
 
     },
-    jump: function(){
-        if (bird.alive == false){
+    jump: function () {
+        if (bird.alive == false) {
             return;
         }
         this.jumpSound.play();
@@ -66,12 +63,12 @@ var mainState = {
 
         //create an animation on the bird
         var animation = game.add.tween(bird);
-        animation.to({angle: -20},100);
+        animation.to({angle: -20}, 100);
         animation.start();
 
     },
-    addOnePipe: function(x,y){
-        var pipe = game.add.sprite(x,y,'pipe');
+    addOnePipe: function (x, y) {
+        var pipe = game.add.sprite(x, y, 'pipe');
         pipes.add(pipe);
 
         //enable physic
@@ -83,32 +80,32 @@ var mainState = {
         pipe.checkWorldBounds = true;
         pipe.outOfBoundsKill = true;
     },
-    addRowOfPipes: function() {
+    addRowOfPipes: function () {
         // Randomly pick a number between 1 and 5
         // This will be the hole position
         var hole = Math.floor(Math.random() * 5) + 1;
 
         // Add the 6 pipes
         // With one big hole at position 'hole' and 'hole + 1'
-        for (var i = 0; i < 8; i++){
+        for (var i = 0; i < 8; i++) {
             if (i != hole && i != hole + 1)
                 this.addOnePipe(400, i * 60 + 10);
         }
-        score += 1 ;
+        score += 1;
         labelScore.text = score;
 
     },
-    hitPipe : function () {
-        if (bird.alive == false){
+    hitPipe: function () {
+        if (bird.alive == false) {
             return;
         }
         bird.alive = false;
         //prevent new pipes from appearing
         game.time.events.remove(timer);
         //go through all the pipes,stop their move
-        pipes.forEach(function(p){
-            p.body.velocity.x = 0 ;
-        },this);
+        pipes.forEach(function (p) {
+            p.body.velocity.x = 0;
+        }, this);
 
     }
 };
